@@ -63,7 +63,8 @@ class GameWithObjects(GameMode):
             for obj in self.objects:
                 obj.action()
         for obj in self.objects:
-            obj.process(event)
+            if not obj.processed:
+                obj.process(event)
 
     def Logic(self, surface):
         GameMode.Logic(self, surface)
