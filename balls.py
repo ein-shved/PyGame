@@ -3,6 +3,9 @@
 
 import pygame
 import random
+import gameobject
+import game
+import dnd
 
 SIZE = 640, 480
 
@@ -16,31 +19,7 @@ def Init(sz):
     screen = pygame.display.set_mode(sz)
     screenrect = screen.get_rect()
 
-class GameMode:
-    '''Basic game mode class'''
-    def __init__(self):
-        self.background = pygame.Color("black")
-
-    def Events(self,event):
-        '''Event parser'''
-        pass
-
-    def Draw(self, screen):
-        screen.fill(self.background)
-
-    def Logic(self, screen):
-        '''What to calculate'''
-        pass
-
-    def Leave(self):
-        '''What to do when leaving this mode'''
-        pass
-
-    def Init(self):
-        '''What to do when entering this mode'''
-        pass
-
-class Ball:
+class Ball(gameobject.GameObject):
     '''Simple ball class'''
 
     def __init__(self, filename, pos = (0.0, 0.0), speed = (0.0, 0.0)):
@@ -80,74 +59,15 @@ class Ball:
         self.speed = dx,dy
         self.rect.center = intn(*self.pos)
 
-class Universe:
-    '''Game universe'''
 
-    def __init__(self, msec, tickevent = pygame.USEREVENT):
-        '''Run a universe with msec tick'''
-        self.msec = msec
-        self.tickevent = tickevent
-
-    def Start(self):
-        '''Start running'''
-        pygame.time.set_timer(self.tickevent, self.msec)
-
-    def Finish(self):
-        '''Shut down an universe'''
-        pygame.time.set_timer(self.tickevent, 0)
-
-class GameWithObjects(GameMode):
-
-    def __init__(self, objects=[]):
-        GameMode.__init__(self)
-        self.objects = objects
-
-    def locate(self, pos):
-        return [obj for obj in self.objects if obj.rect.collidepoint(pos)]
-
-    def Events(self, event):
-        GameMode.Events(self, event)
-        if event.type == Game.tickevent:
-            for obj in self.objects:
-                obj.action()
-
-    def Logic(self, surface):
-        GameMode.Logic(self, surface)
-        for obj in self.objects:
-            obj.logic(surface)
-
-    def Draw(self, surface):
-        GameMode.Draw(self, surface)
-        for obj in self.objects:
-            obj.draw(surface)
-
-class GameWithDnD(GameWithObjects):
-
-    def __init__(self, *argp, **argn):
-        GameWithObjects.__init__(self, *argp, **argn)
-        self.oldpos = 0,0
-        self.drag = None
-
-    def Events(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            click = self.locate(event.pos)
-            if click:
-                self.drag = click[0]
-                self.drag.active = False
-                self.oldpos = event.pos
-        elif event.type == pygame.MOUSEMOTION and event.buttons[0]:
-                if self.drag:
-                    self.drag.pos = event.pos
-                    self.drag.speed = event.rel
-        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            self.drag.active = True
-            self.drag = None
-        GameWithObjects.Events(self, event)
+class GameWithDnD(game.GameWithObjects):
+    def __init__(self, universe, *argp, **argn):
+        game.GameWithObjects.__init__(self, universe, [ dnd.DnD(self) ] )
 
 Init(SIZE)
-Game = Universe(50)
+Game = game.Universe(50)
 
-Run = GameWithDnD()
+Run = GameWithDnD(Game)
 for i in xrange(5):
     x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
     dx, dy = 1+random.random()*5, 1+random.random()*5
