@@ -6,9 +6,15 @@ import random
 import gameobject
 import game
 import dnd
+import math
+
+RESISTANCE = 0.005
+FRICTION = 0.1
 
 def intn(*arg):
     return map(int,arg)
+def speed(dx, dy):
+    return math.sqrt(dx*dx + dy*dy)
 
 class Ball(gameobject.GameObject):
     '''Simple ball class'''
@@ -25,6 +31,7 @@ class Ball(gameobject.GameObject):
         self.active = True
 
     def draw(self, surface):
+        self.rect.center = intn(*self.pos)
         surface.blit(self.surface, self.rect)
 
     def action(self):
@@ -48,8 +55,12 @@ class Ball(gameobject.GameObject):
             y = surface.get_height() - self.rect.height/2
             dy = -dy
         self.pos = x,y
+        dx = dx*(1 - RESISTANCE);
+        dy = dy*(1 - RESISTANCE);
+        __speed = speed(dx, dy);
+        if __speed < 0.7:
+            dx = dy = 0
         self.speed = dx,dy
-        self.rect.center = intn(*self.pos)
 
 class GravityBall(Ball):
     def __init__(self, filename, pos = (0.0, 0.0), speed = (0.0, 0.0)):
@@ -57,9 +68,27 @@ class GravityBall(Ball):
     def action(self):
         self.speed = (self.speed[0], self.speed[1] + 2)
         Ball.action(self)
+    def logic(self, surface):
+        x,y = self.pos
+        dx, dy = self.speed
+        if y > surface.get_height() - self.rect.height/2:
+            dx*=(1 - FRICTION)
+        self.speed = dx,dy
+        Ball.logic(self, surface)
 
 class RollBall(Ball):
     def __init__(self, filename, pos = (0.0, 0.0), speed = (0.0, 0.0)):
-        self.__angle = 0;
         Ball.__init__(self, filename, pos, speed)
-
+        self.__angle = 0
+        self.orig_rect = self.rect
+        self.orig_surface = self.surface
+    def action(self):
+        Ball.action(self)
+        self.__angle += speed(self.speed[0], self.speed[1])
+    def logic(self, surface):
+        self.rect = self.orig_rect
+        Ball.logic(self, surface)
+    def draw(self, surface):
+        self.surface = pygame.transform.rotate(self.orig_surface, self.__angle)
+        self.rect = self.surface.get_rect(center=self.pos)
+        Ball.draw(self, surface);

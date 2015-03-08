@@ -41,7 +41,6 @@ class Universe:
         pygame.time.set_timer(self.tickevent, 0)
 
 class GameWithObjects(GameMode):
-
     def __init__(self, universe, objects=[]):
         GameMode.__init__(self)
         self.objects = objects
@@ -61,15 +60,18 @@ class GameWithObjects(GameMode):
         GameMode.Events(self, event)
         if event.type == self.universe.tickevent:
             for obj in self.objects:
-                obj.action()
-        for obj in self.objects:
-            if not obj.processed:
-                obj.process(event)
+                if not obj.processed:
+                    obj.action()
+        else:
+            for obj in self.objects:
+                if not obj.processed:
+                    obj.process(event)
 
     def Logic(self, surface):
         GameMode.Logic(self, surface)
         for obj in self.objects:
-            obj.logic(surface)
+            if not obj.processed:
+                obj.logic(surface)
 
     def Draw(self, surface):
         GameMode.Draw(self, surface)
