@@ -15,6 +15,7 @@ class DnD(gameobject.GameObject):
                 self.__drag = click[0]
                 self.__drag.processed = True
                 self.__pos = event.pos
+                self.__drag.speed = 0,0
         elif event.type == pygame.MOUSEMOTION and event.buttons[0]:
             if self.__drag:
                 self.__drag.pos = event.pos
@@ -25,6 +26,9 @@ class DnD(gameobject.GameObject):
                 self.__drag.processed = False
                 self.__drag = None
                 self.__pos = event.pos
+        else:        
+            if self.__drag:
+                self.__drag.speed = 0,0
 
     def action(self):
         if self.__drag:

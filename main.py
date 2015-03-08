@@ -5,7 +5,7 @@ import game
 import balls
 import dnd
 
-SIZE = 640, 480
+SIZE = 1280, 600
 
 def Init(sz):
     '''Turn PyGame on'''
@@ -25,19 +25,28 @@ Run = GameWithDnD(Game)
 
 x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
 dx, dy = 1+random.random()*5, 1+random.random()*5
-Run.objects.append(balls.Ball("ball.gif",(x,y),(dx,dy)))
+#Run.objects.append(balls.Ball("ball.gif",(x,y),(dx,dy)))
 
 x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
 dx, dy = 1+random.random()*5, 1+random.random()*5
-Run.objects.append(balls.GravityBallFinal("ball.gif",(x,y),(dx,dy)))
+#Run.objects.append(balls.GravityBallFinal("ball.gif",(x,y),(dx,dy)))
 
 x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
 dx, dy = 1+random.random()*5, 1+random.random()*5
-Run.objects.append(balls.RollBallFinal("ball.gif",(x,y),(dx,dy)))
+#Run.objects.append(balls.RollBallFinal("ball.gif",(x,y),(dx,dy)))
 
 x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
 dx, dy = 1+random.random()*5, 1+random.random()*5
-Run.objects.append(balls.GravityRollBall("ball.gif",(x,y),(dx,dy)))
+#Run.objects.append(balls.GravityRollBall("ball.gif",(x,y),(dx,dy)))
+
+
+for i in xrange(15):
+    x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
+    dx, dy = 1+random.random()*5, 1+random.random()*5
+    m = 3 + random.randrange(10)
+    Run.objects.append(balls.GravityRollHitBall("ball.gif", Run, 
+                    (x,y),(dx,dy), m))
+
 
 Game.Start()
 Run.Init()
