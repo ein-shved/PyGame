@@ -29,11 +29,15 @@ Run.objects.append(balls.Ball("ball.gif",(x,y),(dx,dy)))
 
 x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
 dx, dy = 1+random.random()*5, 1+random.random()*5
-Run.objects.append(balls.GravityBall("ball.gif",(x,y),(dx,dy)))
+Run.objects.append(balls.GravityBallFinal("ball.gif",(x,y),(dx,dy)))
 
 x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
 dx, dy = 1+random.random()*5, 1+random.random()*5
-Run.objects.append(balls.RollBall("ball.gif",(x,y),(dx,dy)))
+Run.objects.append(balls.RollBallFinal("ball.gif",(x,y),(dx,dy)))
+
+x, y = random.randrange(screenrect.w), random.randrange(screenrect.h)
+dx, dy = 1+random.random()*5, 1+random.random()*5
+Run.objects.append(balls.GravityRollBall("ball.gif",(x,y),(dx,dy)))
 
 Game.Start()
 Run.Init()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf
 
-class GameObject:
+class GameObject(object):
     '''Base class for objects in screen'''
     def __init__(self):
         self.processed = False
